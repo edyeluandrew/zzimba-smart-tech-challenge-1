@@ -97,9 +97,17 @@ python -m pytest -q
 alembic upgrade head
 ```
 
+## Pipeline
+
+GitHub Actions runs the test suite on every push and every pull request. The workflow file is .github/workflows/ci.yml.
+
+Render hosts the service from render.yaml, in Frankfurt, on the free plan. It deploys main only after that test check passes. The build installs dependencies. Before the new instance takes traffic, Alembic runs against DIRECT_DATABASE_URL. The process then starts with Uvicorn on the port Render provides. Render calls GET /health to decide the instance is ready.
+
+Create the service once in the Render dashboard with New, then Blueprint, and select this repository. When Render asks for environment values, set DATABASE_URL to the Neon pooled URL and DIRECT_DATABASE_URL to the Neon direct URL. The storage values can stay as they are in .env.example until a bucket exists. After that first connection, a push to main tests and then deploys on its own.
+
 ## Architectural note
 
-Render hosts the API. The process is stateless. Secrets come from the environment, and blueprint files are not written onto the server disk. render.yaml installs dependencies, runs the migration, then starts the app.
+Render hosts the API in Frankfurt. The process is stateless. Secrets come from the environment, and blueprint files are not written onto the server disk. A push to main deploys only after the GitHub test check passes. The blueprint then installs dependencies, runs the migration, and starts the app.
 
 DigitalOcean Spaces is the choice for the blueprint files. A drawing is a file, so it belongs in object storage. Spaces in Frankfurt gives each file a stable public URL. The profile endpoint builds that URL from CLOUD_STORAGE_PUBLIC_BASE_URL plus the file key stored on the user. Access keys stay in the environment.
 

@@ -101,7 +101,7 @@ alembic upgrade head
 
 GitHub Actions runs the test suite on every push and every pull request. The workflow file is .github/workflows/ci.yml.
 
-Render hosts the service from render.yaml, in Frankfurt, on the free plan. It deploys main only after that test check passes. The build installs dependencies. Before the new instance takes traffic, Alembic runs against DIRECT_DATABASE_URL. The process then starts with Uvicorn on the port Render provides. Render calls GET /health to decide the instance is ready.
+Render hosts the service from render.yaml, in Frankfurt, on the free plan. It deploys main only after that test check passes. The build installs dependencies. On startup the service runs Alembic against DIRECT_DATABASE_URL, then starts Uvicorn on the port Render provides. The free plan does not allow a separate pre-deploy command, so the migration stays in the start command. Render calls GET /health to decide the instance is ready.
 
 Create the service once in the Render dashboard with New, then Blueprint, and select this repository. When Render asks for environment values, set DATABASE_URL to the Neon pooled URL and DIRECT_DATABASE_URL to the Neon direct URL. The storage values can stay as they are in .env.example until a bucket exists. After that first connection, a push to main tests and then deploys on its own.
 

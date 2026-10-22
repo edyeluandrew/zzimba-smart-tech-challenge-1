@@ -97,10 +97,12 @@ python -m pytest -q
 alembic upgrade head
 ```
 
-## Architecture
+## Architectural note
 
 Render hosts the API. The process is stateless. Secrets come from the environment, and blueprint files are not written onto the server disk. render.yaml installs dependencies, runs the migration, then starts the app.
 
-DigitalOcean Spaces stores the blueprints. A drawing is a file, so it belongs in object storage, and Spaces in Frankfurt gives each file a stable public URL. The profile endpoint builds that URL from the bucket prefix and the key on the user. The access keys stay in the environment.
+DigitalOcean Spaces is the choice for the blueprint files. A drawing is a file, so it belongs in object storage. Spaces in Frankfurt gives each file a stable public URL. The profile endpoint builds that URL from CLOUD_STORAGE_PUBLIC_BASE_URL plus the file key stored on the user. Access keys stay in the environment.
+
+A live Spaces bucket is not part of this submission. Spaces bills five dollars a month from the moment the first bucket exists, and this brief asks for the URL and the reason, not a funded account. The sample profile still returns the dynamic URL. Creating the bucket later means filling in the four storage variables and uploading engineers/4/site-blueprint.pdf. No application code has to change.
 
 Neon Postgres, also in Frankfurt, stores the contracts, orders, line items, users, and payment events. Those rows need transactions, foreign keys, and backups. SQLAlchemy maps each table to a Python class, and Alembic creates the tables from those classes. Amounts are whole Uganda shillings. The same models run on SQLite in the test suite, which never needs the Neon password.

@@ -2,6 +2,8 @@
 
 This service is the escrow and hardware-store backend for Luweero Build. A civil engineer opens a milestone contract. A contractor places a materials order. A Yo! Payments callback marks the matching record paid. A profile returns the engineer, two mocked trust flags, and a link to the blueprint file.
 
+The hosted API is https://luweero-build-api.onrender.com. Open the docs at https://luweero-build-api.onrender.com/docs. Health is https://luweero-build-api.onrender.com/health. The sample profile is https://luweero-build-api.onrender.com/api/v1/users/profile/4. The bare site address has no page, so it returns Not Found. After a quiet period the free instance can take about half a minute to wake.
+
 ## Setup
 
 From the project folder, in PowerShell:
@@ -20,7 +22,7 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-The API listens on http://127.0.0.1:8000. The docs are at http://127.0.0.1:8000/docs.
+A local run listens on port 8000. The docs to share are the hosted ones at https://luweero-build-api.onrender.com/docs.
 
 The migration creates the tables and inserts Alex Mukasa as user 4.
 

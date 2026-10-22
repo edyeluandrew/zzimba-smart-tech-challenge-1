@@ -4,6 +4,23 @@ This service is the escrow and hardware-store backend for Luweero Build. A civil
 
 The hosted API is https://luweero-build-api.onrender.com. Open the docs at https://luweero-build-api.onrender.com/docs. Health is https://luweero-build-api.onrender.com/health. The sample profile is https://luweero-build-api.onrender.com/api/v1/users/profile/4. The bare site address has no page, so it returns Not Found. After a quiet period the free instance can take about half a minute to wake.
 
+## Layout
+
+The project is a small FastAPI app. Each file has one job.
+
+app/main.py builds the app and mounts the routes under /api/v1.
+app/config.py reads settings from the environment.
+app/database.py opens the database session. It also turns a Neon URL into the driver the app uses.
+app/models.py is the tables. Contract, HardwareOrder, OrderItem, UserAccount, and PaymentEvent are the rows the API stores.
+app/schemas.py is the JSON each endpoint accepts and returns.
+app/storage.py builds the public blueprint URL from the bucket setting and the file key.
+app/api/v1/contracts.py creates a milestone contract.
+app/api/v1/store.py places a hardware order and prices the lines.
+app/api/v1/webhooks.py applies a Yo! Payments callback to a contract or an order.
+app/api/v1/users.py returns the engineer profile.
+app/api/v1/router.py groups those four routes.
+alembic/ creates the tables. tests/ calls the four endpoints. render.yaml and .github/workflows/ci.yml are the host and the test check.
+
 ## Setup
 
 From the project folder, in PowerShell:
